@@ -1,2 +1,3 @@
 # test_repo
-Test repo
+
+My name is Logan Herrmeyer. This is my git repo.

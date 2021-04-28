@@ -1,0 +1,110 @@
+  ---
+title: "Exploratory Data Analysis"
+author: "Logan Herrmeyer"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:  
+    keep_md: true
+    toc: true
+    toc_float: true
+    fig_height: 6
+    fig_width: 12
+    fig_align: 'center'
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+## Reading Notes
+
+Exploratory data analysis is exploring data in a systematic way.
+
+It is a time to investigate every idea that occurs to you.
+
+The goal is to develop an understanding of the data.
+
+It is a state of mind and not a formal process.
+
+Categorical variables can only take a small set of values.
+
+A continuous variable can take an infinite set of values.
+
+Graphs can suggest more questions that we can ask.
+
+Variation is the tendency of a variable to change from measurement to measurement.
+
+Histograms and bar graphs are good for visualizing the distribution of a variable.
+
+Covariation is two variables varying together, the best way to find it is to visualize the relationship on a graph.
+
+Boxplots are also good for showing distribution.
+
+Patterns are useful to reveal covariation.
+
+Models are tools for extracting patterns from data.
+
+## EDA Example
+
+The code below is an example of the EDA process using the `starwars` data from the `tidyverse` package. (Make sure you have the `tidyverse` package installed!)
+
+Run the code line-by-line and look at the output. Add a comment to each line of code that explains what it does/what insights it provides.
+
+```{r}
+library(tidyverse) # Import the tidyverse library
+
+dim(starwars) # Show the dimensions (rows & cols) of the data
+colnames(starwars) # Get column names of the dataset
+
+head(starwars) # Show the first 6 cols of the dataset
+glimpse(starwars) # Gives some basic information about the dataset, such as number of rows and columns, column names, column datatype, and first data points for each column.
+
+?starwars # Gives a text description of the dataset
+
+starwars %>% count(species) # Count the number of species observations in the dataset
+
+mean(starwars$height) # Get the mean height in the dataset
+mean(starwars$height, na.rm = TRUE) # Get the mean height in the dataset, ignoring NA (not available) values
+
+summary(starwars$height) # Show quartiles and mean of the column
+
+cm_to_ft <- function(cm){ # Define a function to convert centimeters to feet
+  ft = cm / 30.48
+  return(ft)
+}
+
+starwars_2 <- starwars %>% mutate(height_ft = cm_to_ft(height)) # Create a new dataset but with an added column of height in feet
+
+dim(starwars_2) # Show the dimensions of the new dataset
+colnames(starwars_2) # Show the column names of the dataset
+
+summary(starwars_2$height_ft) # Show a summary (quartiles and mean) of the height in feet from the dataset
+
+ggplot(starwars_2, aes(height_ft)) + 
+  geom_histogram() # Show a histogram of the heights in feet
+
+starwars_2 %>% filter(height_ft == max(height_ft)) # Show data from the dataset where height is only the max (show the tallest data point)
+starwars_2 %>% filter(height_ft == max(height_ft, na.rm = TRUE)) #Show data from the dataset where height is only the max (show the tallest data point)
+
+# https://starwars.fandom.com/wiki/Yarael_Poof
+```
+
+## EDA Practice
+
+Continue exploring the `starwars` data to gain additional insights, using [R4DS: Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html) as a guide.
+
+It is ok if you don't understand the all code in Chapter 7. (That is what we'll be learning the next two weeks!) If writing your own code is a struggle, try the "copy, paste, and tweak" method.
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+glimpse(starwars)
+plot(height ~ mass, data=starwars) # Are height and mass related?
+ggplot(data = starwars, aes(x=birth_year)) + geom_histogram() # What is the distribution of birth years
+ggplot(data = starwars, aes(x=height)) + geom_histogram() # What is the distribution of heights?
+ggplot(data = starwars, aes(x=mass)) + geom_histogram() # What is the distribution of mass?
+(starwars %>% filter(mass == max(mass, na.rm = TRUE)))["name"] # What character is the outlier with a large mass?
+ggplot(data = starwars, mapping = aes(x = species, y = mass), na.rm = TRUE) + geom_boxplot() # How does mass vary between species?
+ggplot(data = starwars, mapping = aes(x = species, y = height), na.rm = TRUE) + geom_boxplot() # How does height vary between species?
+ggplot(data = starwars, mapping = aes(x = gender, y = height), na.rm = TRUE) + geom_boxplot() # How does mass vary between gender?
+```
